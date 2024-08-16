@@ -6,7 +6,7 @@ import {
     EmbedBuilder,
     SlashCommandBuilder,
 } from "discord.js";
-import startGame from "../clash/startGame";
+import { footer } from "../data/footer";
 
 const helpCommand = {
     data: new SlashCommandBuilder()
@@ -40,7 +40,8 @@ const helpCommand = {
                     inline: false,
                 }
             )
-            .setTimestamp();
+            .setTimestamp()
+            .setFooter(footer);
 
         const github = new ButtonBuilder()
             .setLabel("Github")
@@ -50,6 +51,7 @@ const helpCommand = {
             .setLabel("Clash of Code")
             .setURL("https://www.codingame.com/multiplayer/clashofcode")
             .setStyle(ButtonStyle.Link);
+        
 
         const row = new ActionRowBuilder().addComponents(github, clashofcode);
 
