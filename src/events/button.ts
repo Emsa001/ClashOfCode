@@ -1,9 +1,9 @@
 // ./events/ReadyEvent.ts
 import { Client, Interaction } from "discord.js";
 import { DiscordEvent } from "../types/discordEvent";
-import startClash from "../api/startClash";
-import submitClash from "../api/submitClash";
-import { clashes } from "../api/startGame";
+import startClash from "../clash/startClash";
+import submitClash from "../clash/submitClash";
+import { clashes } from "../clash/startGame";
 
 export default class ReadyEvent implements DiscordEvent {
     name = "interactionCreate";
@@ -17,18 +17,17 @@ export default class ReadyEvent implements DiscordEvent {
                 clashes.find((c) => c.clash === clash)?.cookie || "";
 
             if (action === "start") {
-
                 if (!cookie) {
                     return await interaction.editReply({
                         content: "Clash not found",
-                        components: [],
+                        // components: [],
                     });
                 }
                 const data = await startClash({ clash, cookie });
                 if (data.status !== 204) {
                     return await interaction.editReply({
                         content: "An error occurred while starting the round",
-                        components: [],
+                        // components: [],
                     });
                 }
 
@@ -36,7 +35,7 @@ export default class ReadyEvent implements DiscordEvent {
                 setTimeout(async () => {
                     await interaction.editReply({
                         content: `Round started! [Link](${url})`,
-                        components: [],
+                        // components: [],
                     });
                 }, 100);
             }

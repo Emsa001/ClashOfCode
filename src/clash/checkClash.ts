@@ -6,7 +6,7 @@ interface CheckClashProps {
     cookie: string;
 }
 
-async function checkClash({clash,cookie}:CheckClashProps): Promise<Clash> {
+async function checkClash({ clash, cookie }: CheckClashProps): Promise<Clash> {
     try {
         let data = `["${clash}"]`;
 
@@ -31,7 +31,7 @@ async function checkClash({clash,cookie}:CheckClashProps): Promise<Clash> {
 
         const response = await axios(config);
         return response.data;
-    } catch (error:any) {
+    } catch (error: any) {
         console.log(error);
         return error?.response || error;
     }

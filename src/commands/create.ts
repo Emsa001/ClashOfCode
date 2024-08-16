@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import startGame from "../api/startGame";
+import startGame from "../clash/startGame";
 
 const languagesData: { [key: string]: string[] } = {
     all: [
@@ -119,14 +119,14 @@ const createCommand = {
         )
         .addStringOption((option) =>
             option
-                .setName("cookie")
+                .setName("rememberme")
                 .setDescription("Cookie rememberme")
                 .setRequired(true)
         )
         .addStringOption((option) =>
             option
-                .setName("session")
-                .setDescription("Cookie CGSession")
+                .setName("cgsession")
+                .setDescription("Cookie cgSession")
                 .setRequired(true)
         ),
     async execute(interaction: CommandInteraction) {
@@ -141,17 +141,6 @@ const createCommand = {
             return;
         }
 
-        /*
-
-        [
-            { name: 'rounds', type: 10, value: 1 },
-            { name: 'game_modes', type: 3, value: 'REVERSE,FASTEST,SHORTEST' },
-            { name: 'languages', type: 3, value: 'all' },
-            { name: 'cookie', type: 3, value: '123' }
-        ]
-
-        */
-
         await interaction.deferReply();
 
         const game = await startGame({
@@ -162,8 +151,6 @@ const createCommand = {
             cookie,
             session
         });
-
-        console.log(game);
     },
 };
 

@@ -31,6 +31,7 @@ export interface Clash {
 }
 
 export interface StartRoundProps {
+  round: number;
   channel: TextChannel;
   languages: string[];
   modes: string[];
@@ -49,6 +50,7 @@ export interface StartGameProps {
 
 export type TempClash = {
   languages: string[];
+  modes: string[];
   clash: string;
   cookie: string;
   session: string; 

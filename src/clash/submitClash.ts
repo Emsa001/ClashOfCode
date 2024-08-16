@@ -44,7 +44,7 @@ async function submitClash({ clash, cookie }: SubmitClashProps) {
 
         const testSession = await startClashTestSession({ clash, cookie });
         if (testSession.status !== 200)
-            throw new Error("Error starting test session");
+            throw new Error(testSession);
 
         let config = {
             method: "post",
