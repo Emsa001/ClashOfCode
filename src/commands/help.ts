@@ -17,11 +17,6 @@ const helpCommand = {
             .setColor(0x0099ff)
             .setTitle("⚔️ Clash of Code Bot")
             .setURL("https://www.codingame.com/multiplayer/clashofcode")
-            .setAuthor({
-                name: "by Emanuel",
-                iconURL: "https://avatars.githubusercontent.com/u/59392453?v=4",
-                url: "https://github.com/emsa001",
-            })
             .setDescription(
                 "⚠️ **! DO NOT USE YOUR ACCOUNT AS A BOT, CREATE A NEW ONE !**"
             )
