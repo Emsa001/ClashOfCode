@@ -1,0 +1,14 @@
+{
+    "type": "module",
+    "dependencies": {
+        "axios": "^1.7.4",
+        "discord.js": "^14.15.3",
+        "dotenv": "^16.4.5"
+    },
+    "scripts": {
+        "start": "npx tsx src/index.ts"
+    },
+    "devDependencies": {
+        "@types/node": "^22.3.0"
+    }
+}
