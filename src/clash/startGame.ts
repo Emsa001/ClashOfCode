@@ -15,17 +15,13 @@ async function startGame({
 }: StartGameProps): Promise<Clash[]> {
     try {
         const game: Clash[] = [];
-
-        const message = await interaction.editReply(
-            "Game started. Creating rounds..."
-        ) as Message;
-        
+        const channel = interaction.channel as TextChannel;
         const creator = interaction.member?.user;
 
         for (let i = 0; i < rounds; i++) {
             const round = await startRound({
                 round: i + 1,
-                channel: interaction.channel as TextChannel,
+                channel,
                 creator,
                 languages,
                 modes,
@@ -36,7 +32,7 @@ async function startGame({
             game.push(round);
         }
 
-        return await finishGame({ rounds, message, game });
+        return await finishGame({ rounds, channel, game });
     } catch (error) {
         await interaction.editReply(
             "An error occurred while starting the game. Please try again later."

@@ -22,11 +22,7 @@ interface AnnounceRoundProps {
     clash: Clash;
 }
 
-const announceRound = async ({
-    round,
-    message,
-    clash,
-}: AnnounceRoundProps) => {
+const announceRound = async ({ round, message, clash }: AnnounceRoundProps) => {
     const publicHandle = clash.publicHandle;
     const url = `https://www.codingame.com/clashofcode/clash/${publicHandle}`;
     const { languages } = clashes.find((c) => c.clash === publicHandle) || {
@@ -48,10 +44,15 @@ const announceRound = async ({
     const avatar = `https://cdn.discordapp.com/avatars/${tempClash?.creator?.id}/${tempClash?.creator?.avatar}.png?size=256`;
 
     const roundEmebed = new EmbedBuilder()
-        .setColor(clash.started ? 0xfacc15 : 0x22c55e)
+        .setColor(
+            clash.finished ? 0x818cf8 : clash.started ? 0xfacc15 : 0x22c55e
+        )
         .setTitle(`Round ${round}`)
         .setDescription("Click the buttons below to start or join the clash")
-        .setAuthor({ name: tempClash?.creator?.username || "unknown", iconURL: avatar })
+        .setAuthor({
+            name: tempClash?.creator?.username || "unknown",
+            iconURL: avatar,
+        })
         .addFields(
             {
                 name: "languages",
@@ -101,16 +102,13 @@ const announceRound = async ({
     const row = new ActionRowBuilder().addComponents(startButton, joinButton);
 
     message.edit({
+        content: "",
         embeds: [roundEmebed],
         components: [row as any],
     });
 };
 
-const waitForEnd = (
-    round: number,
-    message: Message,
-    clash: Clash
-) => {
+const waitForEnd = (round: number, message: Message, clash: Clash) => {
     const publicHandle = clash.publicHandle;
     const { cookie } = clashes.find((c) => c.clash === publicHandle) || {
         cookie: "",
@@ -149,15 +147,13 @@ const startRound = async ({
     session,
 }: StartRoundProps): Promise<Clash | false> => {
     try {
+        const message = (await channel.send("Creating round...")) as Message;
         const response = await createClash({ languages, modes, cookie });
         if (response?.status != 200) return false;
         const { data } = response;
 
         const clash: string = data.publicHandle;
         clashes.push({ clash, cookie, languages, session, modes, creator });
-        const message = (await channel.send(
-            "Round created. Waiting for players..."
-        )) as Message;
         await announceRound({ round, message, clash: data });
         return await waitForEnd(round, message, data);
     } catch (error) {

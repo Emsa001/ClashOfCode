@@ -141,7 +141,7 @@ const createCommand = {
             return;
         }
 
-        await interaction.deferReply();
+        await interaction.reply({ content: "Creating game...", ephemeral: true });
 
         const game = await startGame({
             interaction,
@@ -149,7 +149,7 @@ const createCommand = {
             modes: game_modes?.split(","),
             languages: languagesData[languages],
             cookie,
-            session
+            session,
         });
     },
 };

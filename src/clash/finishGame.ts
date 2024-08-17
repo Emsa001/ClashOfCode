@@ -6,7 +6,7 @@ import { footer } from "../data/footer";
 
 const gameFinishMessage = async (
     rounds: number,
-    message: Message,
+    channel: TextChannel,
     game: Clash[]
 ) => {
     const clash = clashes.find((c) => c.clash === game[0].publicHandle);
@@ -29,7 +29,7 @@ const gameFinishMessage = async (
     });
 
     const roundEmebed = new EmbedBuilder()
-        .setColor(0x8b5cf6)
+        .setColor(0x9333ea)
         .setTitle(`Game finished! - ${rounds} rounds`)
         .addFields(
             {
@@ -62,19 +62,19 @@ const gameFinishMessage = async (
         roundEmebed.addFields(...leaderboardField);
     }
 
-    await message.reply({
+    await channel.send({
         embeds: [roundEmebed],
     });
 };
 
 interface FinishGameProps {
     rounds: number;
-    message: Message;
+    channel: TextChannel;
     game: Clash[];
 }
 
-const finishGame = async ({ rounds, message, game }: FinishGameProps) => {
-    await gameFinishMessage(rounds, message, game);
+const finishGame = async ({ rounds, channel, game }: FinishGameProps) => {
+    await gameFinishMessage(rounds, channel, game);
 
     game.forEach((round) => {
         const index = clashes.findIndex((c) => c.clash === round.publicHandle);
