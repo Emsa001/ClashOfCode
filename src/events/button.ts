@@ -1,7 +1,7 @@
 // ./events/ReadyEvent.ts
 import { Client, Interaction } from "discord.js";
 import { DiscordEvent } from "../types/discordEvent";
-import startClash from "../clash/startClash";
+import startClash from "../clash/api/startClash";
 import { clashes } from "../clash/startGame";
 import wait from 'node:timers/promises';
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { clashes } from "./startGame";
+import { clashes } from "../startGame";
 
 interface SubmitClashProps {
     clash: string;

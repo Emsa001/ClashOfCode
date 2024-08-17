@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Clash } from "../types/clashes";
+import { Clash } from "../../types/clashes";
 
 interface CheckClashProps {
     clash: string;

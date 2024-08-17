@@ -1,5 +1,5 @@
-import checkClash from "!/src/clash/checkClash";
-import createClash from "!/src/clash/createClash";
+import checkClash from "!/src/clash/api/checkClash";
+import createClash from "!/src/clash/api/createClash";
 import {
     ActionRowBuilder,
     APIUser,
@@ -12,7 +12,7 @@ import {
     User,
 } from "discord.js";
 import { Clash, StartRoundProps } from "../types/clashes";
-import submitClash from "./submitClash";
+import submitClash from "./api/submitClash";
 import { clashes } from "./startGame";
 import { footer } from "../data/footer";
 
@@ -100,12 +100,16 @@ const announceRound = async ({ round, message, clash }: AnnounceRoundProps) => {
         .setStyle(ButtonStyle.Link);
 
     const row = new ActionRowBuilder().addComponents(startButton, joinButton);
-
-    message.edit({
-        content: "",
-        embeds: [roundEmebed],
-        components: [row as any],
-    });
+    
+    try {
+        message.edit({
+            content: "",
+            embeds: [roundEmebed],
+            components: [row as any],
+        });
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 const waitForEnd = (round: number, message: Message, clash: Clash) => {
