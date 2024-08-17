@@ -18,11 +18,10 @@ import { footer } from "../data/footer";
 
 interface AnnounceRoundProps {
     round: number;
-    message: Message;
     clash: Clash;
 }
 
-const announceRound = async ({ round, message, clash }: AnnounceRoundProps) => {
+const announceRound = async ({ round, clash }: AnnounceRoundProps) => {
     const publicHandle = clash.publicHandle;
     const url = `https://www.codingame.com/clashofcode/clash/${publicHandle}`;
     const { languages } = clashes.find((c) => c.clash === publicHandle) || {
@@ -41,6 +40,7 @@ const announceRound = async ({ round, message, clash }: AnnounceRoundProps) => {
         });
 
     const tempClash = clashes.find((c) => c.clash === publicHandle);
+    if (!tempClash) return;
     const avatar = `https://cdn.discordapp.com/avatars/${tempClash?.creator?.id}/${tempClash?.creator?.avatar}.png?size=256`;
 
     const roundEmebed = new EmbedBuilder()
@@ -100,19 +100,32 @@ const announceRound = async ({ round, message, clash }: AnnounceRoundProps) => {
         .setStyle(ButtonStyle.Link);
 
     const row = new ActionRowBuilder().addComponents(startButton, joinButton);
-    
+
     try {
-        message.edit({
+        await tempClash.message.edit({
             content: "",
             embeds: [roundEmebed],
             components: [row as any],
         });
     } catch (error) {
-        console.log(error);
+        try {
+            tempClash.message = (await tempClash?.channel.send({
+                content: "",
+                embeds: [roundEmebed],
+                components: [row as any],
+            })) as Message;
+        } catch (error) {
+            console.log(error);
+        }
     }
 };
 
-const waitForEnd = (round: number, message: Message, clash: Clash) => {
+interface WaitForEndProps {
+    round: number;
+    clash: Clash;
+}
+
+const waitForEnd = ({ round, clash }: WaitForEndProps) => {
     const publicHandle = clash.publicHandle;
     const { cookie } = clashes.find((c) => c.clash === publicHandle) || {
         cookie: "",
@@ -131,7 +144,7 @@ const waitForEnd = (round: number, message: Message, clash: Clash) => {
                 clash: publicHandle,
                 cookie,
             });
-            announceRound({ round, message, clash: clashRound });
+            announceRound({ round, clash: clashRound });
 
             if (clashRound.finished) {
                 clearInterval(intervalId);
@@ -157,9 +170,18 @@ const startRound = async ({
         const { data } = response;
 
         const clash: string = data.publicHandle;
-        clashes.push({ clash, cookie, languages, session, modes, creator });
-        await announceRound({ round, message, clash: data });
-        return await waitForEnd(round, message, data);
+        clashes.push({
+            clash,
+            cookie,
+            languages,
+            session,
+            modes,
+            creator,
+            channel,
+            message,
+        });
+        await announceRound({ round, clash: data });
+        return await waitForEnd({ round, clash: data });
     } catch (error) {
         console.log(error);
         await channel.send(

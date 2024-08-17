@@ -56,4 +56,6 @@ export type TempClash = {
   cookie: string;
   session: string; 
   creator: User | APIUser | undefined;
+  channel: TextChannel;
+  message: Message;
 };
