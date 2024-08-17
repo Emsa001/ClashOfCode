@@ -1,4 +1,4 @@
-import { APIUser, CommandInteraction, TextChannel, User } from "discord.js";
+import { APIUser, CommandInteraction, Message, TextChannel, User } from "discord.js";
 
 export interface Player {
   codingamerId: number;

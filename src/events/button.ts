@@ -3,6 +3,7 @@ import { Client, Interaction } from "discord.js";
 import { DiscordEvent } from "../types/discordEvent";
 import startClash from "../clash/startClash";
 import { clashes } from "../clash/startGame";
+import wait from 'node:timers/promises';
 
 export default class ReadyEvent implements DiscordEvent {
     name = "interactionCreate";
@@ -35,12 +36,10 @@ export default class ReadyEvent implements DiscordEvent {
                     });
                 }
 
-                const url = `https://www.codingame.com/clashofcode/clash/${clash}`;
-                setTimeout(async () => {
-                    await interaction.reply({
-                        content: `Starting round in 5 seconds! [Click here to join the clash](${url})`,
-                    });
-                }, 100);
+                interaction.reply({content: "Starting the game..."})
+                await wait.setTimeout(5000);
+                interaction.deleteReply();
+
             }
         } catch (error) {
             console.error(error);

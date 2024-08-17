@@ -5,6 +5,7 @@ import {
     APIUser,
     ButtonBuilder,
     ButtonStyle,
+    CommandInteraction,
     EmbedBuilder,
     Message,
     TextChannel,
@@ -17,14 +18,12 @@ import { footer } from "../data/footer";
 
 interface AnnounceRoundProps {
     round: number;
-    channel?: TextChannel;
-    message?: Message;
+    message: Message;
     clash: Clash;
 }
 
 const announceRound = async ({
     round,
-    channel,
     message,
     clash,
 }: AnnounceRoundProps) => {
@@ -49,7 +48,7 @@ const announceRound = async ({
     const avatar = `https://cdn.discordapp.com/avatars/${tempClash?.creator?.id}/${tempClash?.creator?.avatar}.png?size=256`;
 
     const roundEmebed = new EmbedBuilder()
-        .setColor(0x22c55e)
+        .setColor(clash.started ? 0xfacc15 : 0x22c55e)
         .setTitle(`Round ${round}`)
         .setDescription("Click the buttons below to start or join the clash")
         .setAuthor({ name: tempClash?.creator?.username || "unknown", iconURL: avatar })
@@ -96,31 +95,20 @@ const announceRound = async ({
 
     const joinButton = new ButtonBuilder()
         .setURL(url)
-        .setDisabled(clash.started)
-        .setLabel("Join")
+        .setLabel(clash.started ? "See round" : "Join")
         .setStyle(ButtonStyle.Link);
 
     const row = new ActionRowBuilder().addComponents(startButton, joinButton);
 
-    if (channel) {
-        const response = await channel.send({
-            embeds: [roundEmebed],
-            components: [row as any],
-        });
-        return response;
-    } else if (message) {
-        const response = await message.edit({
-            embeds: [roundEmebed],
-            components: [row as any],
-        });
-
-        return response;
-    }
+    message.edit({
+        embeds: [roundEmebed],
+        components: [row as any],
+    });
 };
 
 const waitForEnd = (
     round: number,
-    message: Message | undefined,
+    message: Message,
     clash: Clash
 ) => {
     const publicHandle = clash.publicHandle;
@@ -167,8 +155,10 @@ const startRound = async ({
 
         const clash: string = data.publicHandle;
         clashes.push({ clash, cookie, languages, session, modes, creator });
-
-        const message = await announceRound({ round, channel, clash: data });
+        const message = (await channel.send(
+            "Round created. Waiting for players..."
+        )) as Message;
+        await announceRound({ round, message, clash: data });
         return await waitForEnd(round, message, data);
     } catch (error) {
         console.log(error);

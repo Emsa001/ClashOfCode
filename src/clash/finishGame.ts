@@ -1,4 +1,4 @@
-import { EmbedBuilder, TextChannel } from "discord.js";
+import { CommandInteraction, EmbedBuilder, Message, TextChannel } from "discord.js";
 import { Clash } from "../types/clashes";
 import getLeaderBoard from "./getLeaderBoard";
 import { clashes } from "./startGame";
@@ -6,16 +6,24 @@ import { footer } from "../data/footer";
 
 const gameFinishMessage = async (
     rounds: number,
-    channel: TextChannel,
+    message: Message,
     game: Clash[]
 ) => {
-    const leaderboard = await getLeaderBoard({ game });
     const clash = clashes.find((c) => c.clash === game[0].publicHandle);
-    
-    const topPlayers = leaderboard.slice(0, 3).map((player, index) => {
+
+    const leaderBoard = await getLeaderBoard({ game });
+    const leaderboardField = leaderBoard.map((player, index) => {
         return {
             name: `${index + 1}. ${player.name}`,
             value: `${player.score} points`,
+            inline: true,
+        };
+    });
+
+    const allRounds = game.map((round, index) => {
+        return {
+            name: `Round ${index}`,
+            value: `[Link](https://www.codingame.com/clashofcode/clash/${round.publicHandle})`,
             inline: true,
         };
     });
@@ -40,25 +48,33 @@ const gameFinishMessage = async (
                 inline: false,
             }
         )
-        .setThumbnail(leaderboard[0].avatar)
+        .addFields(...allRounds)
+        .addFields({
+            name: "\u200B",
+            value: "\u200B",
+            inline: false,
+        })
+        .setThumbnail(leaderBoard[0].avatar)
         .setTimestamp()
         .setFooter(footer);
 
-    if (topPlayers.length > 0) {
-        roundEmebed.addFields(...topPlayers);
+    if (leaderboardField.length > 0) {
+        roundEmebed.addFields(...leaderboardField);
     }
 
-    await channel.send({ embeds: [roundEmebed] });
+    await message.reply({
+        embeds: [roundEmebed],
+    });
 };
 
 interface FinishGameProps {
     rounds: number;
-    channel: TextChannel;
+    message: Message;
     game: Clash[];
 }
 
-const finishGame = async ({ rounds, channel, game }: FinishGameProps) => {
-    await gameFinishMessage(rounds, channel, game);
+const finishGame = async ({ rounds, message, game }: FinishGameProps) => {
+    await gameFinishMessage(rounds, message, game);
 
     game.forEach((round) => {
         const index = clashes.findIndex((c) => c.clash === round.publicHandle);
