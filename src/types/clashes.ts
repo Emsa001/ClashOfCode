@@ -1,4 +1,4 @@
-import { CommandInteraction, TextChannel } from "discord.js";
+import { APIUser, CommandInteraction, TextChannel, User } from "discord.js";
 
 export interface Player {
   codingamerId: number;
@@ -33,6 +33,7 @@ export interface Clash {
 export interface StartRoundProps {
   round: number;
   channel: TextChannel;
+  creator: User | APIUser | undefined;
   languages: string[];
   modes: string[];
   cookie: string;
@@ -54,4 +55,5 @@ export type TempClash = {
   clash: string;
   cookie: string;
   session: string; 
+  creator: User | APIUser | undefined;
 };

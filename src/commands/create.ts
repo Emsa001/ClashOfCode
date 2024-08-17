@@ -133,8 +133,8 @@ const createCommand = {
         const rounds = Number(interaction.options.get("rounds")?.value);
         const game_modes = String(interaction.options.get("game_modes")?.value);
         const languages = String(interaction.options.get("languages")?.value);
-        const cookie = String(interaction.options.get("cookie")?.value);
-        const session = String(interaction.options.get("session")?.value);
+        const cookie = String(interaction.options.get("rememberme")?.value);
+        const session = String(interaction.options.get("cgsession")?.value);
 
         if (!rounds || !game_modes || !languages) {
             await interaction.reply("Please provide all the required options");

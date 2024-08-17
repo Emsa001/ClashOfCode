@@ -29,7 +29,7 @@ async function loadCommands(client: Client) {
         }));
 
         await rest.put(
-            Routes.applicationGuildCommands(process.env.CLIENT_ID || '',"1036388532996014172"),
+            Routes.applicationCommands(process.env.CLIENT_ID || ''),
             { body: commandData },
         );
 

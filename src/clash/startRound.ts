@@ -2,11 +2,13 @@ import checkClash from "!/src/clash/checkClash";
 import createClash from "!/src/clash/createClash";
 import {
     ActionRowBuilder,
+    APIUser,
     ButtonBuilder,
     ButtonStyle,
     EmbedBuilder,
     Message,
     TextChannel,
+    User,
 } from "discord.js";
 import { Clash, StartRoundProps } from "../types/clashes";
 import submitClash from "./submitClash";
@@ -43,10 +45,14 @@ const announceRound = async ({
             };
         });
 
+    const tempClash = clashes.find((c) => c.clash === publicHandle);
+    const avatar = `https://cdn.discordapp.com/avatars/${tempClash?.creator?.id}/${tempClash?.creator?.avatar}.png?size=256`;
+
     const roundEmebed = new EmbedBuilder()
         .setColor(0x22c55e)
         .setTitle(`Round ${round}`)
         .setDescription("Click the buttons below to start or join the clash")
+        .setAuthor({ name: tempClash?.creator?.username || "unknown", iconURL: avatar })
         .addFields(
             {
                 name: "languages",
@@ -148,6 +154,7 @@ const waitForEnd = (
 const startRound = async ({
     round,
     channel,
+    creator,
     languages,
     modes,
     cookie,
@@ -155,14 +162,11 @@ const startRound = async ({
 }: StartRoundProps): Promise<Clash | false> => {
     try {
         const response = await createClash({ languages, modes, cookie });
+        if (response?.status != 200) return false;
         const { data } = response;
 
-        if (response?.status != 200) {
-            throw new Error(response);
-        }
-
         const clash: string = data.publicHandle;
-        clashes.push({ clash, cookie, languages, session, modes });
+        clashes.push({ clash, cookie, languages, session, modes, creator });
 
         const message = await announceRound({ round, channel, clash: data });
         return await waitForEnd(round, message, data);

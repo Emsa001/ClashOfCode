@@ -15,15 +15,17 @@ async function startGame({
 }: StartGameProps): Promise<Clash[]> {
     const game: Clash[] = [];
 
-    await interaction.followUp("Game created!");
+    // await interaction.p
     const channel = (await interaction.guild?.channels.fetch(
         interaction.channelId as string
     )) as TextChannel;
+    const creator = interaction.member?.user;
 
     for (let i = 0; i < rounds; i++) {
         const round = await startRound({
             round: i + 1,
             channel,
+            creator,
             languages,
             modes,
             cookie,
