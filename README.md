@@ -26,3 +26,8 @@ After filling in the required parameters, the bot will automatically handle the 
 You can find cookies in developer tools on your browser.
 
 ![Cookies](https://developer.chrome.com/static/docs/devtools/application/cookies/image/clearing-cookies-394c5013116ae.png)
+
+
+TODO: 
+- Put Combine Clash and TempClash
+- Clean up the startRound function
