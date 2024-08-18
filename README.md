@@ -29,5 +29,5 @@ You can find cookies in developer tools on your browser.
 
 
 TODO: 
-- Put Combine Clash and TempClash
+- Combine Clash and TempClash
 - Clean up the startRound function
