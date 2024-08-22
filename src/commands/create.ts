@@ -1,7 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { getCGSession, getRememberme, usedCookies } from "../data/cookies";
 import startGame from "../clash/startGame";
-
-let started = false;
 
 const languagesData: { [key: string]: string[] } = {
     all: [
@@ -123,34 +122,34 @@ const createCommand = {
             option
                 .setName("rememberme")
                 .setDescription("Cookie rememberme")
-                .setRequired(true)
+                .setRequired(false)
         )
         .addStringOption((option) =>
             option
                 .setName("cgsession")
                 .setDescription("Cookie cgSession")
-                .setRequired(true)
+                .setRequired(false)
         ),
     async execute(interaction: CommandInteraction) {
         const rounds = Number(interaction.options.get("rounds")?.value);
         const game_modes = String(interaction.options.get("game_modes")?.value);
         const languages = String(interaction.options.get("languages")?.value);
-        const cookie = String(interaction.options.get("rememberme")?.value);
-        const session = String(interaction.options.get("cgsession")?.value);
+        const cookie = String(interaction.options.get("rememberme")?.value) || getRememberme();
+        const session = String(interaction.options.get("cgsession")?.value) || getCGSession();
 
         if (!rounds || !game_modes || !languages) {
             await interaction.reply("Please provide all the required options");
             return;
         }
 
-        if(started) {
+        if(usedCookies.find((c) => c.cookie == cookie || c.session == session) === undefined) {
             await interaction.reply({ content: "A game is already running", ephemeral: true });
             return;
         }
 
         await interaction.reply({ content: "Creating game...", ephemeral: true });
 
-        started = true;
+        usedCookies.push({ cookie, session });
         await startGame({
             interaction,
             rounds,
@@ -160,7 +159,7 @@ const createCommand = {
             session,
         });
 
-        started = false;
+        usedCookies.splice(usedCookies.findIndex((c) => c.cookie == cookie || c.session == session), 1);
     },
 };
 
