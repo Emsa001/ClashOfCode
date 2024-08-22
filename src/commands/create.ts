@@ -142,7 +142,7 @@ const createCommand = {
             return;
         }
 
-        if(usedCookies.find((c) => c.cookie == cookie || c.session == session) === undefined) {
+        if(usedCookies.find((c) => c.cookie == cookie || c.session == session)) {
             await interaction.reply({ content: "A game is already running", ephemeral: true });
             return;
         }
