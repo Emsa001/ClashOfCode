@@ -170,6 +170,7 @@ const startRound = async ({
     try {
         const message = (await channel.send("Creating round...")) as Message;
         const response = await createClash({ languages, modes, cookie });
+        // console.log(response);
         if (response?.status != 200) return false;
         const { data } = response;
 
