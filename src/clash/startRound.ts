@@ -15,6 +15,7 @@ import { Clash, StartRoundProps } from "../types/clashes";
 import submitClash from "./api/submitClash";
 import { clashes } from "./startGame";
 import { footer } from "../data/footer";
+import getLeaderBoard from "./getLeaderBoard";
 
 interface AnnounceRoundProps {
     round: number;
@@ -28,12 +29,10 @@ const announceRound = async ({ round, clash }: AnnounceRoundProps) => {
         languages: [],
     };
 
-    const topPlayers = clash.players
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 3)
+    const topPlayers = getLeaderBoard({ game: [clash] })
         .map((player, index) => {
             return {
-                name: `${index + 1}. ${player.codingamerNickname}`,
+                name: `${index + 1}. ${player.name}`,
                 value: `${player.score || 0} points`,
                 inline: true,
             };
@@ -75,6 +74,11 @@ const announceRound = async ({ round, clash }: AnnounceRoundProps) => {
                 inline: true,
             },
             {
+                name: "Mode",
+                value: `${clash?.type || "unknown"}`,
+                inline: true,
+            },
+            {
                 name: "\u200B",
                 value: "\u200B",
                 inline: false,
@@ -99,7 +103,7 @@ const announceRound = async ({ round, clash }: AnnounceRoundProps) => {
         .setLabel(clash.started ? "See round" : "Join")
         .setStyle(ButtonStyle.Link);
 
-    const row = new ActionRowBuilder().addComponents(startButton, joinButton);
+    const row = new ActionRowBuilder().addComponents(joinButton,startButton);
 
     try {
         await tempClash.message.edit({

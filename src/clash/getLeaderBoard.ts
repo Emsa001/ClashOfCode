@@ -14,13 +14,17 @@ type LeaderBoard = {
 const getLeaderBoard = ({ game }: GameProps) => {
     const leaderboard: LeaderBoard[] = [];
 
-
-    game.forEach((round) => {
+    game.forEach((round: Clash) => {
         round.players.forEach((player: Player) => {
+
+            let extra = 0;
+            if(round.mode != "SHORTEST")
+                extra = ((15 * 60 * 1000) - player.duration) / 1000;
+
             const data = {
                 name: player.codingamerNickname,
                 avatar: `https://static.codingame.com/servlet/fileservlet?id=${player.codingamerAvatarId}`,
-                score: player.score,
+                score: player.score + extra,
                 position: player.position,
             };
 

@@ -1,6 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import startGame from "../clash/startGame";
 
+let started = false;
+
 const languagesData: { [key: string]: string[] } = {
     all: [
         "Bash",
@@ -141,9 +143,15 @@ const createCommand = {
             return;
         }
 
+        if(started) {
+            await interaction.reply({ content: "A game is already running", ephemeral: true });
+            return;
+        }
+
         await interaction.reply({ content: "Creating game...", ephemeral: true });
 
-        const game = await startGame({
+        started = true;
+        await startGame({
             interaction,
             rounds,
             modes: game_modes?.split(","),
@@ -151,6 +159,8 @@ const createCommand = {
             cookie,
             session,
         });
+
+        started = false;
     },
 };
 

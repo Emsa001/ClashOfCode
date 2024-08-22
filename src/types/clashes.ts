@@ -28,6 +28,7 @@ export interface Clash {
   started: boolean;
   players: Player[];
   type: string;
+  mode: string;
 }
 
 export interface StartRoundProps {

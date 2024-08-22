@@ -1,4 +1,4 @@
-import { CommandInteraction, EmbedBuilder, Message, TextChannel } from "discord.js";
+import { EmbedBuilder, TextChannel } from "discord.js";
 import { Clash } from "../types/clashes";
 import getLeaderBoard from "./getLeaderBoard";
 import { clashes } from "./startGame";
