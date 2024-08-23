@@ -1,7 +1,9 @@
 import { Clash, Player } from "../types/clashes";
+import { clashes } from "./startGame";
 
 interface GameProps {
     game: Clash[];
+    bot: number;
 }
 
 type LeaderBoard = {
@@ -11,20 +13,25 @@ type LeaderBoard = {
     position: number;
 };
 
-const getLeaderBoard = ({ game }: GameProps) => {
+const getLeaderBoard = ({ game, bot }: GameProps) => {
     const leaderboard: LeaderBoard[] = [];
 
     game.forEach((round: Clash) => {
-        round.players.forEach((player: Player) => {
+        round.players.filter((e) => e.codingamerId != bot).forEach((player: Player) => {
 
             let extra = 0;
-            if(round.mode != "SHORTEST")
-                extra = ((15 * 60 * 1000) - player.duration) / 1000;
+
+            if(player.score == 100){
+                if(round.mode == "SHORTEST")
+                    extra = player.criterion - 500;
+                else
+                    extra = ((15 * 60 * 1000) - player.duration) / 1000;
+            }
 
             const data = {
                 name: player.codingamerNickname,
                 avatar: `https://static.codingame.com/servlet/fileservlet?id=${player.codingamerAvatarId}`,
-                score: player.score + player.score == 100 ? extra : 0,
+                score: player.score + extra,
                 position: player.position,
             };
 

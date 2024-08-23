@@ -11,7 +11,7 @@ const gameFinishMessage = async (
 ) => {
     const clash = clashes.find((c) => c.clash === game[0].publicHandle);
 
-    const leaderBoard = await getLeaderBoard({ game });
+    const leaderBoard = await getLeaderBoard({ game, bot: Number(clash?.cookie.slice(0, 7)) });
     const leaderboardField = leaderBoard.map((player, index) => {
         return {
             name: `${index + 1}. ${player.name}`,

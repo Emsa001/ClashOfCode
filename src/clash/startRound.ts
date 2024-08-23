@@ -29,18 +29,20 @@ const announceRound = async ({ round, clash }: AnnounceRoundProps) => {
         languages: [],
     };
 
-    const topPlayers = getLeaderBoard({ game: [clash] })
-        .map((player, index) => {
+    const tempClash = clashes.find((c) => c.clash === publicHandle);
+    if (!tempClash) return;
+    const avatar = `https://cdn.discordapp.com/avatars/${tempClash?.creator?.id}/${tempClash?.creator?.avatar}.png?size=256`;
+
+    const topPlayers = getLeaderBoard({ game: [clash], bot: Number(tempClash.cookie.slice(0,7)) }).map(
+        (player, index) => {
             return {
                 name: `${index + 1}. ${player.name}`,
                 value: `${player.score || 0} points`,
                 inline: true,
             };
-        });
+        }
+    );
 
-    const tempClash = clashes.find((c) => c.clash === publicHandle);
-    if (!tempClash) return;
-    const avatar = `https://cdn.discordapp.com/avatars/${tempClash?.creator?.id}/${tempClash?.creator?.avatar}.png?size=256`;
 
     const roundEmebed = new EmbedBuilder()
         .setColor(
@@ -60,7 +62,7 @@ const announceRound = async ({ round, clash }: AnnounceRoundProps) => {
             },
             {
                 name: "Players",
-                value: `${clash.players.length}/${clash.nbPlayersMax}`,
+                value: `${clash.players.length - 1}/${clash.nbPlayersMax}`,
                 inline: true,
             },
             {
@@ -75,7 +77,7 @@ const announceRound = async ({ round, clash }: AnnounceRoundProps) => {
             },
             {
                 name: "Mode",
-                value: `${clash?.type || "unknown"}`,
+                value: `${clash?.mode || "unknown"}`,
                 inline: true,
             },
             {
@@ -103,7 +105,7 @@ const announceRound = async ({ round, clash }: AnnounceRoundProps) => {
         .setLabel(clash.started ? "See round" : "Join")
         .setStyle(ButtonStyle.Link);
 
-    const row = new ActionRowBuilder().addComponents(joinButton,startButton);
+    const row = new ActionRowBuilder().addComponents(joinButton, startButton);
 
     try {
         await tempClash.message.edit({
@@ -166,14 +168,14 @@ const startRound = async ({
     modes,
     cookie,
     session,
-}: StartRoundProps): Promise<Clash | false> => {
+}: StartRoundProps) => {
     try {
-        const message = (await channel.send("Creating round...")) as Message;
         const response = await createClash({ languages, modes, cookie });
-        // console.log(response);
-        if (response?.status != 200) return false;
+        if (response?.status != 200)
+            return { error: true, ...response.data };
         const { data } = response;
-
+        
+        const message = (await channel.send("Creating round...")) as Message;
         const clash: string = data.publicHandle;
         clashes.push({
             clash,
@@ -183,16 +185,15 @@ const startRound = async ({
             modes,
             creator,
             channel,
-            message,
+            message
         });
         await announceRound({ round, clash: data });
         return await waitForEnd({ round, clash: data });
     } catch (error) {
-        console.log(error);
         await channel.send(
             "An error occurred while starting a next round. Finishing the game"
         );
-        return false;
+        return { error: true, message: "An error occurred" };
     }
 };
 

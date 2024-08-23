@@ -28,7 +28,12 @@ async function startGame({
                 cookie,
                 session,
             });
-            if (!round) return game;
+            if (round.error){
+                await interaction.editReply(
+                    "An error occurred while starting the game. Please try again later: " + round.message
+                );
+                return game;
+            };
             game.push(round);
         }
 
