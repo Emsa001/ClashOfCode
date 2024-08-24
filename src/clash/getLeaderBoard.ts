@@ -21,17 +21,19 @@ const getLeaderBoard = ({ game, bot }: GameProps) => {
 
             let extra = 0;
 
-            if(player.score == 100){
-                if(round.mode == "SHORTEST")
-                    extra = player.criterion - 500;
-                else
-                    extra = ((15 * 60 * 1000) - player.duration) / 1000;
+            if (player.score == 100) {
+                if (round.mode == "SHORTEST") {
+                    extra = Math.max(0, 500 - player.criterion);
+                } else {
+                    extra = Math.max(0, ((15 * 60 * 1000) - player.duration) / 1500);
+                }
             }
 
+            const playerScore = Math.round(player.score + extra);
             const data = {
                 name: player.codingamerNickname,
                 avatar: `https://static.codingame.com/servlet/fileservlet?id=${player.codingamerAvatarId}`,
-                score: Math.round(player.score + extra),
+                score: playerScore,
                 position: player.position,
             };
 
@@ -39,7 +41,7 @@ const getLeaderBoard = ({ game, bot }: GameProps) => {
                 (leader) => leader.name === player.codingamerNickname
             );
             if (find) {
-                find.score += player.score;
+                find.score += playerScore;
             } else {
                 leaderboard.push(data);
             }
