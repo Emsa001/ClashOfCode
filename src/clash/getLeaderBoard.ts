@@ -31,7 +31,7 @@ const getLeaderBoard = ({ game, bot }: GameProps) => {
             const data = {
                 name: player.codingamerNickname,
                 avatar: `https://static.codingame.com/servlet/fileservlet?id=${player.codingamerAvatarId}`,
-                score: player.score + extra,
+                score: Math.round(player.score + extra),
                 position: player.position,
             };
 
