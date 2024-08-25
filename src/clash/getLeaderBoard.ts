@@ -29,7 +29,7 @@ const getLeaderBoard = ({ game, bot }: GameProps) => {
                 }
             }
 
-            const playerScore = Math.round(player.score + extra);
+            const playerScore = Math.round(player.score + extra) || 0;
             const data = {
                 name: player.codingamerNickname,
                 avatar: `https://static.codingame.com/servlet/fileservlet?id=${player.codingamerAvatarId}`,
